@@ -8,7 +8,7 @@ const checkMove = (pos: number): boolean => {
 
 const win = {xs: "XXX", os: "OOO"}
 
-export const isGameOver = (): boolean => {
+export const isGameWon = (): boolean => {
   return horizontalCheck() ||
     verticalCheck() ||
     diagonalCheck()
@@ -32,7 +32,7 @@ const diagonalCheck = (): boolean => {
 }
 
 export const makeMove = (pos: number, player: Symbol): string => {
-  if (checkMove(pos) && !isGameOver()) {
+  if (checkMove(pos) && !isGameWon()) {
     setCurrentBoard(pos, player)
   }
   return getCurrentBoard()

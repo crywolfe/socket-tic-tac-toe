@@ -1,5 +1,5 @@
 import {Server} from 'socket.io'
-import {isGameOver, makeMove} from './game'
+import {isGameWon, makeMove} from './game'
 import {players, setPlayers, Symbol} from './players'
 
 const port = 5050
@@ -24,7 +24,7 @@ io.on("connect", (socket) => {
     io.emit('game.begin', serializedPlayers)
   }
 
-  if (isGameOver()) {
+  if (isGameWon()) {
     io.emit('game.over', socket.data)
   }
 
@@ -40,7 +40,7 @@ io.on("connect", (socket) => {
     let data2 = {
       playerSymbol: data.player,
       board: makeMove(data.pos, data.player),
-      isGameOver: isGameOver(),
+      isGameOver: isGameWon(),
     }
 
     if (data2.isGameOver) {
