@@ -22,7 +22,7 @@ readcommand.loop( (err: { code: string; }, args: any, str: any, next: () => any)
     sigints = 0;
   }
   if (args[0] === 'r') {
-    socket.emit('game.resigned', {"resigned": args[0]})
+    socket.emit('game.resigned', {"resigned": args[0], "id": socket.id})
 
   } else {
     socket.emit('make.move', {"player": args[0], "pos": parseInt(args[1])})
@@ -48,8 +48,9 @@ socket.on("game.begin", (data) => {
 
 socket.on("game.end", (data) => {
   console.log("End game");
+  const otherPlayerId = Array.from(deserializedPlayers.values()).filter((player) => player.id !== data.id)
   if (data.resigned === 'r') {
-    console.log('Game won by [first | second] player due to resignation')
+    console.log(`Game won by ${otherPlayerId[0].id} player ${otherPlayerId[0].symbol} due to resignation`)
   }
 });
 
