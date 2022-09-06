@@ -17,8 +17,6 @@ io.on("connect", (socket) => {
   }
 
   const serializedPlayers = JSON.stringify(Array.from(players.entries()))
-  console.log({serializedPlayers})
-
 
   if (players.size === 2) {
     io.emit('game.begin', serializedPlayers)
@@ -28,7 +26,6 @@ io.on("connect", (socket) => {
     console.log(`A client disconnected, reason: ${reason}`);
     console.log("Number of clients: %d", io.engine.clientsCount);
     players.delete(socket.id)
-    console.log(players)
     socket.broadcast.emit('player.disconnect', socket.id)
   });
 

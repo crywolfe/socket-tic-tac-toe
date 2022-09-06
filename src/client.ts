@@ -55,7 +55,6 @@ socket.on("game.end", (data) => {
 
 socket.on("made.move", (data) => {
   console.log(`${data.playerSymbol} made a move`);
-  console.log(data);
   console.log(data.board)
   if (data.isGameOver) {
     console.log(`Game won by ${data.playerSymbol} player`)
@@ -67,7 +66,8 @@ socket.on("made.move", (data) => {
 });
 
 socket.on("player.disconnect", (id) => {
-  console.log(`player disconnected with id: ${id}`);
+  const otherPlayerId = Array.from(deserializedPlayers.values()).filter((player) => player.id !== id)
+  console.log(`Game won by ${otherPlayerId[0].id} player since ${id} player disconnected`)
 });
 
 const isGameTied = (board: string[]) => {
