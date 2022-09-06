@@ -1,0 +1,63 @@
+NodeJS Client/Server Test
+
+You will write a simple server that allows playing Tic-Tac-Toe games between two command-line clients.
+
+The server will be started like:
+	node  server.js 5050
+
+The server will listen on the specified port (5050 in this case) for clients to connect.
+
+The client will be started like:
+	node client.js 127.0.0.1 5050
+
+The client will connect to the server at the specified IP (127.0.0.1) and port (5050). Upon connection the client will display a message and prompt, like:
+	connected to 127.0.0.1 5050
+	>
+
+When two clients have connected to the server, the game will begin. The server will send each client the message:
+	Game started. You are the [first | second] player.
+
+The first player can then send a move like:
+	> 5
+
+This move would place an ‘X’ at square number 5.
+
+The Tic-Tac-Toe board is numbered like this:
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+
+If the move is valid and accepted by the server, it sends the current board position to both clients and the clients display it, like:
+...
+.x.
+...
+
+Let’s say the second player make the move:
+	> 9
+
+Both clients would then receive and display the new board position of:
+...
+.x.
+..o
+
+When the game is over, the server notifies both clients of the result and they display a message, like:
+	Game won by [first | second] player.
+Or
+	Game is tied.
+
+Either player can resign the game at any time, by sending ‘r’. Even when waiting for the opponent to move. The player who resigned loses the game. Both clients are notified which player won and why. Both clients display a message like:
+	Game won by [first | second] player due to resignation.
+
+If a player disconnects from the server, the server awards the game to the player that is still connected. The client displays a message like:
+	Game won by [first | second] player since [second | first] player disconnected.
+
+The clients close the connection to the server after the game is over and exit. The clients can be restarted to connect to the server again to play another game. The server should continue running and handle the next game.
+
+You should use bi-directional sockets for the connection between the client and server. Use the npm libraries socket.io, socket.io-client and readcommand. You can use additional  libraries if you need.
