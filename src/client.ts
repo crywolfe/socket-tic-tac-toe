@@ -34,8 +34,7 @@ readcommand.loop( (err: { code: string; }, args: any, str: any, next: () => any)
 const socket = io("http://localhost:5050")
 
 socket.on("connect", () => {
-  console.log(`Welcome Player`);
-  console.log(socket.id)
+  console.log(`Welcome Player ${socket.id}`);
 });
 
 socket.on("game.begin", (data) => {
@@ -62,8 +61,7 @@ socket.on("made.move", (data) => {
     console.log(`Game won by ${data.playerSymbol} player`)
   }
 
-  // Tie
-  if (!data.board.includes('.')) {
+  if (isGameTied(data.board)) {
     console.log('Game is tied.')
   }
 });
@@ -71,3 +69,7 @@ socket.on("made.move", (data) => {
 socket.on("player.disconnect", (id) => {
   console.log(`player disconnected with id: ${id}`);
 });
+
+const isGameTied = (board: string[]) => {
+  return !board.includes('.')
+}

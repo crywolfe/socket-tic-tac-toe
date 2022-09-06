@@ -24,16 +24,12 @@ io.on("connect", (socket) => {
     io.emit('game.begin', serializedPlayers)
   }
 
-  if (isGameWon()) {
-    io.emit('game.over', socket.data)
-  }
-
   socket.on("disconnect", (reason) => {
     console.log(`A client disconnected, reason: ${reason}`);
     console.log("Number of clients: %d", io.engine.clientsCount);
     players.delete(socket.id)
     console.log(players)
-    socket.broadcast.emit('player.disconnect', id)
+    socket.broadcast.emit('player.disconnect', socket.id)
   });
 
   socket.on("make.move", (data) => {
@@ -52,5 +48,6 @@ io.on("connect", (socket) => {
   socket.on("game.resigned", (data) => {
     io.emit('game.end', data)
   })
+
 })
 
