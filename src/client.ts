@@ -44,7 +44,6 @@ const socket = io(host)
 socket.on("connect", () => {
   console.log(`connected to ${host}`)
   console.log(`Welcome Player ${socket.id}`);
-
 });
 
 socket.on("game.wait", (data) => {
