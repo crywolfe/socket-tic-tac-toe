@@ -1,6 +1,7 @@
 import {io} from 'socket.io-client'
 import {getCurrentBoard} from './board'
 import {Player} from './players'
+import {port} from './server'
 
 const readcommand = require('readcommand');
 
@@ -31,7 +32,7 @@ readcommand.loop( (err: { code: string; }, args: any, str: any, next: () => any)
   return next();
 });
 
-const socket = io("http://localhost:5050")
+const socket = io(`http://localhost:${port}`)
 
 socket.on("connect", () => {
   console.log(`Welcome Player ${socket.id}`);

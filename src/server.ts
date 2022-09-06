@@ -2,7 +2,8 @@ import {Server} from 'socket.io'
 import {isGameWon, makeMove} from './game'
 import {players, setPlayers, Symbol} from './players'
 
-const port = 5050
+export const port = parseInt(process.argv[2]) ?? 5050
+
 const io = new Server(port)
 console.log(`Socket server is listening on port ${port}`)
 
