@@ -38,9 +38,11 @@ io.on("connect", (socket) => {
   });
 
   socket.on("make.move", (data) => {
+
+
     let data2 = {
-      playerSymbol: data.player,
-      board: makeMove(data.pos, data.player),
+      playerId: id,
+      board: makeMove(data.pos, id),
       isGameOver: isGameWon(),
     }
 

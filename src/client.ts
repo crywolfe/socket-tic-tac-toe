@@ -25,7 +25,7 @@ readcommand.loop( (err: { code: string; }, args: any, str: any, next: () => any)
     socket.emit('game.resigned', {"resigned": args[0], "id": socket.id})
 
   } else {
-    socket.emit('make.move', {"player": args[0], "pos": parseInt(args[1])})
+    socket.emit('make.move', {"id": socket.id, "pos": parseInt(args[0])})
   }
 
   return next();
@@ -67,10 +67,11 @@ socket.on("game.end", (data) => {
 });
 
 socket.on("made.move", (data) => {
-  console.log(`${data.playerSymbol} made a move`);
+  const filteredPlayers = Array.from(deserializedPlayers.values()).filter((player) => player.id === data.playerId)
+  console.log(`${filteredPlayers[0].symbol} made a move`);
   console.log(data.board)
   if (data.isGameOver) {
-    console.log(`Game won by ${data.playerSymbol} player`)
+    console.log(`Game won by ${data.playerId} player`)
   }
 
   if (isGameTied(data.board)) {

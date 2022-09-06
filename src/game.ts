@@ -1,5 +1,4 @@
 import {board, getCurrentBoard, setCurrentBoard} from './board'
-import {Symbol} from './players'
 
 const checkMove = (pos: number): boolean => {
   if (pos < 1 || pos > 9) return false
@@ -31,9 +30,9 @@ const diagonalCheck = (): boolean => {
     board[2] + board[4] + board[6] === win.xs || board[2] + board[4] + board[6] === win.os
 }
 
-export const makeMove = (pos: number, player: Symbol): string => {
+export const makeMove = (pos: number, id: string): string => {
   if (checkMove(pos) && !isGameWon()) {
-    setCurrentBoard(pos, player)
+    setCurrentBoard(pos, id)
   }
   return getCurrentBoard()
 }

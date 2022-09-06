@@ -1,4 +1,4 @@
-import {Symbol} from './players'
+import {players} from './players'
 
 export const board: string[] = ['.', '.', '.', '.', '.', '.', '.', '.', '.']
 
@@ -10,6 +10,7 @@ export const getCurrentBoard = () => {
 `
 }
 
-export const setCurrentBoard = (pos: number, player: Symbol) => {
-  board[pos - 1] = String(player)
+export const setCurrentBoard = (pos: number, id: string) => {
+  const symbol = players.get(id)?.symbol
+  board[pos - 1] = String(symbol)
 }
