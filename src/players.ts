@@ -21,4 +21,5 @@ export const setPlayers = (id: string, symbol: Symbol) => {
     symbol: symbol,
     id
   }
-  players.set(id, player)}
+  players.set(id, player)
+}
