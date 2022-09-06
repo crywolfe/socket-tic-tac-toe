@@ -1,6 +1,6 @@
 import {Server} from 'socket.io'
 import {isGameOver, makeMove} from './game'
-import {getPlayers, players, Symbol, setPlayers} from './players'
+import {players, setPlayers, Symbol} from './players'
 
 const port = 5050
 const io = new Server(port)
@@ -15,14 +15,17 @@ io.on("connect", (socket) => {
   } else {
     setPlayers(id, Symbol.X)
   }
-  console.log({id, players: getPlayers()})
+
+  const serializedPlayers = JSON.stringify(Array.from(players.entries()))
+  console.log({serializedPlayers})
+
 
   if (players.size === 2) {
-    io.emit('game.begin', getPlayers())
+    io.emit('game.begin', serializedPlayers)
   }
 
   if (isGameOver()) {
-    io.emit('game.over', getPlayers())
+    io.emit('game.over', socket.data)
   }
 
   socket.on("disconnect", (reason) => {
@@ -34,15 +37,20 @@ io.on("connect", (socket) => {
   });
 
   socket.on("make.move", (data) => {
-    data.board = makeMove(data.pos, data.player)
-    data.isGameOver = isGameOver()
-    console.log({players2: getPlayers()})
-    data.players = getPlayers()
-    if (data.isGameOver) {
-      console.log({gameIsOver: data.isGameOver, players: data.players})
-      io.emit('game.end', data)
+    let data2 = {
+      playerSymbol: data.player,
+      board: makeMove(data.pos, data.player),
+      isGameOver: isGameOver(),
     }
-    io.emit('made.move', data)
+
+    if (data2.isGameOver) {
+      io.emit('game.end', data2)
+    }
+    io.emit('made.move', data2)
   });
+
+  socket.on("game.resigned", (data) => {
+    io.emit('game.end', data)
+  })
 })
 

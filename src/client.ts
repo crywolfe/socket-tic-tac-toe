@@ -1,10 +1,11 @@
 import {io} from 'socket.io-client'
 import {getCurrentBoard} from './board'
-import {getPlayers, setPlayers, Symbol} from './players'
+import {Player} from './players'
 
 const readcommand = require('readcommand');
 
 let sigints = 0;
+let deserializedPlayers = new Map<string, Player>()
 
 readcommand.loop( (err: { code: string; }, args: any, str: any, next: () => any) => {
   if (err && err.code !== 'SIGINT') {
@@ -20,11 +21,12 @@ readcommand.loop( (err: { code: string; }, args: any, str: any, next: () => any)
   } else {
     sigints = 0;
   }
+  if (args[0] === 'r') {
+    socket.emit('game.resigned', {"resigned": args[0]})
 
-  console.log(`Received move: ${JSON.stringify(args)}`);
-  socket.emit('make.move', {"player": args[0], "pos": args[1]})
-  // socket.emit('game.over', null)
-  // console.log({inClient: getCurrentBoard()})
+  } else {
+    socket.emit('make.move', {"player": args[0], "pos": parseInt(args[1])})
+  }
 
   return next();
 });
@@ -36,28 +38,35 @@ socket.on("connect", () => {
   console.log(socket.id)
 });
 
-socket.on("game.begin", () => {
+socket.on("game.begin", (data) => {
   console.log("BEGIN!")
+  deserializedPlayers = new Map(JSON.parse(data))
+  console.log({data, deserializedPlayers})
   console.log('Beginning Board', getCurrentBoard())
 })
 
 
-// socket.on("game.end", (data) => {
-//   console.log("End game");
-//   console.log({data})
-// });
+socket.on("game.end", (data) => {
+  console.log("End game");
+  if (data.resigned === 'r') {
+    console.log('Game won by [first | second] player due to resignation')
+  }
+});
 
 socket.on("made.move", (data) => {
-  console.log(`${getPlayers().get(socket.id)?.symbol} made a move`);
-  console.log({currentBoard: data.board, players: data.players})
+  console.log(`${data.playerSymbol} made a move`);
+  console.log(data);
+  console.log(data.board)
   if (data.isGameOver) {
-    console.log("GAME IS OVER!!!")
-    console.log({data})
-    // socket.emit('game.end', data)
+    console.log(`Game won by ${data.playerSymbol} player`)
+  }
+
+  // Tie
+  if (!data.board.includes('.')) {
+    console.log('Game is tied.')
   }
 });
 
 socket.on("player.disconnect", (id) => {
   console.log(`player disconnected with id: ${id}`);
 });
-
