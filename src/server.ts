@@ -1,8 +1,11 @@
 import {Server} from 'socket.io'
 import {isGameWon, makeMove} from './game'
-import {players, setPlayers, Symbol} from './players'
+import {players, setPlayers, Status, Symbol} from './players'
 
-export const port = parseInt(process.argv[2]) ?? 5050
+let port = 5050
+if (process.argv[2]) {
+  port = parseInt(process.argv[2]) ?? 5050
+}
 
 const io = new Server(port)
 console.log(`Socket server is listening on port ${port}`)
@@ -11,13 +14,17 @@ io.on("connect", (socket) => {
   let id = socket.id
 
   if (players.size === 1) {
-    setPlayers(id, Symbol.O)
+    setPlayers(id, Symbol.O, Status.SECOND)
 
   } else {
-    setPlayers(id, Symbol.X)
+    setPlayers(id, Symbol.X, Status.FIRST)
   }
 
   const serializedPlayers = JSON.stringify(Array.from(players.entries()))
+
+  if (players.size === 1) {
+    io.emit('game.wait', serializedPlayers)
+  }
 
   if (players.size === 2) {
     io.emit('game.begin', serializedPlayers)

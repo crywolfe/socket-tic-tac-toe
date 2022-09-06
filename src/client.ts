@@ -1,7 +1,6 @@
 import {io} from 'socket.io-client'
 import {getCurrentBoard} from './board'
 import {Player} from './players'
-import {port} from './server'
 
 const readcommand = require('readcommand');
 
@@ -32,16 +31,30 @@ readcommand.loop( (err: { code: string; }, args: any, str: any, next: () => any)
   return next();
 });
 
-const socket = io(`http://localhost:${port}`)
+let attachingPort = 5050
+let baseUrl = 'http://localhost'
+if (process.argv[2] && process.argv[3]) {
+  baseUrl = process.argv[2] ?? 'http://localhost:'
+  attachingPort = parseInt(process.argv[3]) ?? 5050
+}
+
+const host = String(`${baseUrl}:${attachingPort}`)
+const socket = io(host)
 
 socket.on("connect", () => {
+  console.log(`connected to ${host}`)
   console.log(`Welcome Player ${socket.id}`);
+
 });
 
-socket.on("game.begin", (data) => {
-  console.log("BEGIN!")
+socket.on("game.wait", (data) => {
   deserializedPlayers = new Map(JSON.parse(data))
-  console.log({data, deserializedPlayers})
+  console.log(`Waiting. You are the ${deserializedPlayers.get(socket.id)?.status} player`)
+})
+
+socket.on("game.begin", (data) => {
+  deserializedPlayers = new Map(JSON.parse(data))
+  console.log(`Game started. You are the ${deserializedPlayers.get(socket.id)?.status} player`)
   console.log('Beginning Board', getCurrentBoard())
 })
 
